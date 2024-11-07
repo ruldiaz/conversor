@@ -1,4 +1,4 @@
-import java.util.Map;
+
 import java.util.Scanner;
 
 public class Principal {
@@ -14,6 +14,15 @@ public class Principal {
             System.out.println("Error al obtener tasas de cambio: " + ex.getMessage());
             return;
         }
+
+        String[][] conversiones = {
+                {"USD", "ARS"},
+                {"ARS", "USD"},
+                {"USD", "BOB"},
+                {"BOB", "USD"},
+                {"USD", "COP"},
+                {"COP", "USD"},
+        };
 
         int opcion = 0;
 
@@ -37,34 +46,21 @@ public class Principal {
             if(opcion >= 1 && opcion <= 6){
                 System.out.println("Ingrese el valor que desea convertir: ");
                 double valor = lectura.nextDouble();
-                double resultado = 0;
 
-                switch (opcion){
-                    case 1: // Dólar peso => argentino
-                        resultado = valor * moneda.conversion_rates().get("ARS");
-                        System.out.printf("El valor %.2f [USD] corresponde al valor final de =>>> %.2f [ARS]%n", valor, resultado);
-                        break;
-                    case 2: // Peso argentino => dólar
-                        resultado = valor / moneda.conversion_rates().get("ARS");
-                        System.out.printf("El valor %.2f [ARS] corresponde al valor final de =>>> %.2f [USD]%n", valor, resultado);
-                        break;
-                    case 3: // Dólar => peso boliviano
-                        resultado = valor * moneda.conversion_rates().get("BOB");
-                        System.out.printf("El valor %.2f [USD] corresponde al valor final de =>>> %.2f [BOB]%n", valor, resultado);
-                        break;
-                    case 4: // Peso boliviano => dólar
-                        resultado = valor / moneda.conversion_rates().get("BOB");
-                        System.out.printf("El valor %.2f [BOB] corresponde al valor final de =>>> %.2f [USD]%n", valor, resultado);
-                        break;
-                    case 5: // Dólar => peso colombiano
-                        resultado = valor * moneda.conversion_rates().get("COP");
-                        System.out.printf("El valor %.2f [USD] corresponde al valor final de =>>> %.2f [COP]%n", valor, resultado);
-                        break;
-                    case 6: // Peso colombiano => dólar
-                        resultado = valor / moneda.conversion_rates().get("COP");
-                        System.out.printf("El valor %.2f [COP] corresponde al valor final de =>>> %.2f [USD]%n", valor, resultado);
-                        break;
+                String monedaOrigen = conversiones[opcion - 1][0];
+                String monedaDestino = conversiones[opcion - 1][1];
+
+                double resultado;
+                if(monedaDestino.equals("USD")){
+                    double tasaCambio = moneda.conversion_rates().get(monedaOrigen);
+                    resultado = valor / tasaCambio;
+                }else{
+                    double tasaCambio = moneda.conversion_rates().get(monedaDestino);
+                    resultado = valor * tasaCambio;
                 }
+
+                System.out.printf("El valor %.2f [%s] corresponde al valor final de =>>> %.2f [%s]%n",
+                        valor, monedaOrigen, resultado, monedaDestino);
 
             }else if(opcion != 7){
                 System.out.println("Opción no válida.");
